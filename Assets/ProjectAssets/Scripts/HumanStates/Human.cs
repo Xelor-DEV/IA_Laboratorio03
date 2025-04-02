@@ -1,3 +1,11 @@
+public enum TypeState 
+{ 
+    Play, 
+    Eat, 
+    Toilet, 
+    Sleep 
+}
+
 public class Human : State
 {
     public DataAgent _DataAgent;
@@ -8,5 +16,4 @@ public class Human : State
         base.LocadComponent();
         _DataAgent = GetComponent<DataAgent>();
     }
-
 }

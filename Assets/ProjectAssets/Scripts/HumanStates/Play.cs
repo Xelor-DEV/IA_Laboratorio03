@@ -2,7 +2,7 @@ public class Play : Human
 {
     private void Awake()
     {
-        typestate = TypeState.Jugar;
+        typestate = TypeState.Play;
         LocadComponent();
     }
     public override void LocadComponent()
@@ -19,7 +19,7 @@ public class Play : Human
     {
         if (_DataAgent.Energy.value < 0.25f)
         {
-            _StateMachine.ChangeState(TypeState.Dormir);
+            _StateMachine.ChangeState(TypeState.Sleep);
         }
         else {
             _DataAgent.DiscountEnergy();

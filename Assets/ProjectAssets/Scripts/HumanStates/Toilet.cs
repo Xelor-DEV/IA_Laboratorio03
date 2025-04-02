@@ -2,7 +2,7 @@ public class Toilet : Human
 {
     private void Awake()
     {
-        typestate = TypeState.Banno;
+        typestate = TypeState.Toilet;
         LocadComponent();
     }
     public override void LocadComponent()

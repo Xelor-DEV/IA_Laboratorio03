@@ -2,7 +2,7 @@ public class Eat : Human
 {
     private void Awake()
     {
-        typestate = TypeState.Comer;
+        typestate = TypeState.Eat;
         LocadComponent();
     }
     public override void LocadComponent()

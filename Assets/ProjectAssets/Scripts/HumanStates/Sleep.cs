@@ -1,12 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class Sleep : Human
 {
     private void Awake()
     {
-        typestate = TypeState.Dormir;
+        typestate = TypeState.Sleep;
         LocadComponent();
     }
     public override void LocadComponent()
@@ -20,8 +16,6 @@ public class Sleep : Human
     }
     public override void Execute()
     {
-         
-
         base.Execute();
     }
     public override void Exit()
