@@ -1,5 +1,6 @@
-using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class TransitionVariable
@@ -41,13 +42,22 @@ public class AgentDataManager : MonoBehaviour
     public TransitionVariable hunger;
     public TransitionVariable bladder;
 
-    private void Update()
+    [Header("Show State")]
+    [SerializeField] private Image energyBar;
+    [SerializeField] private Image hungerBar;
+    [SerializeField] private Image bladderBar;
+
+    void Update()
     {
         if (isPaused) return;
 
         energy.Update();
         hunger.Update();
         bladder.Update();
+
+        energyBar.fillAmount = energy.current;
+        hungerBar.fillAmount = hunger.current;
+        bladderBar.fillAmount = bladder.current;
     }
 }
 

@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class StateMachine : MonoBehaviour
@@ -5,6 +6,9 @@ public class StateMachine : MonoBehaviour
     [SerializeField] private State[] allStates;
     [SerializeField] private State currentState = null;
     [SerializeField] private TypeState startState;
+
+    [Header("Show State")]
+    [SerializeField] private TMP_Text showState;
 
     void Start()
     {
@@ -40,5 +44,7 @@ public class StateMachine : MonoBehaviour
         currentState = newState;
         newState.enabled = true;
         currentState.Enter();
+
+        showState.text = "State: " + currentState.TypeState.ToString();
     }
 }
