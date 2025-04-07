@@ -1,24 +1,45 @@
+using Assets.ProjectAssets.Scripts;
+using UnityEngine;
+
 public class Eat : Human
 {
+    [Header("Transition Thresholds")]
+    [SerializeField] private float hungerSatisfiedThreshold = 0.1f;
+
     private void Awake()
     {
-        typestate = TypeState.Eat;
-        LocadComponent();
+        typeState = TypeState.Eat;
+        LoadComponents();
     }
-    public override void LocadComponent()
-    {
-        base.LocadComponent();
-    }
+
     public override void Enter()
     {
-
+        hasArrived = false;
+        agent.Target = destinationManager.diningRoom;
+        agent.Type = TypeSteeringBehavior.Arrive;
+        agentData.isPaused = true;
+        agentData.hunger.decreaseEnabled = false;
     }
+
     public override void Execute()
     {
-        base.Execute();
+        if (!hasArrived)
+        {
+            if (agent.TargetDistance < arrivalThreshold)
+            {
+                hasArrived = true;
+                agentData.isPaused = false;
+                agentData.hunger.decreaseEnabled = true;
+            }
+            return;
+        }
+
+        if (agentData.hunger.current <= hungerSatisfiedThreshold)
+            stateMachine.ChangeState(TypeState.Play);
     }
+
     public override void Exit()
     {
-
+        agentData.hunger.decreaseEnabled = false;
     }
 }

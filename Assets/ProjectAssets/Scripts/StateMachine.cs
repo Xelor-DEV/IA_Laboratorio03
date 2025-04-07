@@ -1,47 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class StateMachine : MonoBehaviour
 {
-    public State[] states ;
-    public State currentState = null;
-    public TypeState Startstate;
-    // Start is called before the first frame update
+    [SerializeField] private State[] allStates;
+    [SerializeField] private State currentState = null;
+    [SerializeField] private TypeState startState;
+
     void Start()
     {
-        states = GetComponents<State>();
-         
-        ChangeState(Startstate);
+        allStates = GetComponents<State>();
+        ChangeState(startState);
     }
-
-    public void ChangeState(TypeState type)
-    {
-        foreach (var state in states) {
-
-            if (((State)state).typestate == type)
-            {
-                if (currentState != null)
-                    currentState.Exit();
-
-                ((State)state).Enter();
-                currentState = ((State)state);
-                state.enabled = true;
-
-            }
-            else
-            {
-                state.enabled = false;
-            }
-        }
-    }
-
 
     private void Update()
     {
-        if(currentState!=null)
+        if (currentState != null)
         {
             currentState.Execute();
         }
+    }
+
+    public void ChangeState(TypeState newStateType)
+    {
+        State newState = null;
+
+        foreach (var state in allStates)
+        {
+            if (state.TypeState == newStateType)
+                newState = state;
+            else
+                state.enabled = false;
+        }
+
+        if (newState == null) return;
+
+        if (currentState != null)
+            currentState.Exit();
+
+        currentState = newState;
+        newState.enabled = true;
+        currentState.Enter();
     }
 }

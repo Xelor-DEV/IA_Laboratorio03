@@ -11,9 +11,9 @@ public class Data
     public float time;
     public float timeRate;
     public float timeFrameRate =0;
-    public Data()
-    {
-
+    public Data() { 
+    
+    
     }
 }
 public class DataAgent : MonoBehaviour

@@ -1,19 +1,28 @@
-public enum TypeState 
-{ 
-    Play, 
-    Eat, 
-    Toilet, 
-    Sleep 
+using UnityEngine;
+using Assets.ProjectAssets.Scripts;
+public enum TypeState
+{
+    Play,
+    Eat,
+    Toilet,
+    Sleep
 }
 
 public class Human : State
 {
-    public DataAgent _DataAgent;
+    protected AgentDataManager agentData;
+    protected Agent agent;
+    protected DestinationManager destinationManager;
+    [SerializeField] protected bool hasArrived;
 
-     
-    public override void LocadComponent()
+    [Header("Settings")]
+    [SerializeField] protected float arrivalThreshold = 0.7f;
+
+    public override void LoadComponents()
     {
-        base.LocadComponent();
-        _DataAgent = GetComponent<DataAgent>();
+        base.LoadComponents();
+        agentData = GetComponent<AgentDataManager>();
+        agent = GetComponent<Agent>();
+        destinationManager = GetComponent<DestinationManager>();
     }
 }

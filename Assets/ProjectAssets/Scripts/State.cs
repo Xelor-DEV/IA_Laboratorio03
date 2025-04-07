@@ -1,13 +1,25 @@
 using UnityEngine;
 
-
 public class State : MonoBehaviour
 {
-    public TypeState typestate;
-    public StateMachine _StateMachine;
-    public virtual void LocadComponent()
+    [SerializeField] protected StateMachine stateMachine;
+    [SerializeField] protected TypeState typeState;
+
+    public TypeState TypeState
     {
-        _StateMachine = GetComponent<StateMachine>();
+        get 
+        { 
+            return typeState; 
+        }
+        set 
+        { 
+            typeState = value; 
+        }
+    }
+
+    public virtual void LoadComponents()
+    {
+        stateMachine = GetComponent<StateMachine>();
     }
     public virtual void Enter()
     {
