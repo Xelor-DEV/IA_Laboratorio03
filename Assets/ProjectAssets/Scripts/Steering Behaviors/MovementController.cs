@@ -4,52 +4,44 @@ using UnityEngine.InputSystem;
 public class MovementController : MonoBehaviour
 {
     public float speed = 5f;          // Velocidad de movimiento
-    public float rotationSpeed = 10f; // Velocidad de rotación
-    public Camera playerCamera;       // Referencia a la cámara en tercera persona
+    public Camera povCamera;           // Referencia a la cámara en primera persona
 
     private Vector2 moveInput;
+    private float verticalInput;
 
     void Start()
     {
         // Asignar automáticamente la cámara principal si no está asignada
-        if (playerCamera == null)
-            playerCamera = Camera.main;
+        if (povCamera == null)
+            povCamera = Camera.main;
     }
 
     void Update()
     {
-        if (playerCamera == null) return;
+        if (povCamera == null) return;
 
-        // Obtener direcciones de la cámara (proyectadas en el plano horizontal)
-        Vector3 cameraForward = playerCamera.transform.forward;
-        cameraForward.y = 0;
-        cameraForward.Normalize();
-
-        Vector3 cameraRight = playerCamera.transform.right;
-        cameraRight.y = 0;
-        cameraRight.Normalize();
+        // Obtener direcciones de la cámara
+        Vector3 cameraForward = povCamera.transform.forward;
+        Vector3 cameraRight = povCamera.transform.right;
 
         // Calcular dirección de movimiento relativa a la cámara
         Vector3 moveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
 
-        // Aplicar movimiento
-        if (moveDirection != Vector3.zero)
-        {
-            // Mover el objeto
-            transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
+        // Movimiento vertical (Space/Y)
+        Vector3 verticalMovement = Vector3.up * verticalInput;
 
-            // Rotar el objeto hacia la dirección del movimiento
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                rotationSpeed * Time.deltaTime
-            );
-        }
+        // Combinar y aplicar movimiento
+        Vector3 totalMovement = (moveDirection + verticalMovement) * speed * Time.deltaTime;
+        transform.Translate(totalMovement, Space.World);
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
+    }
+
+    public void OnVerticalMove(InputAction.CallbackContext context)
+    {
+        verticalInput = context.ReadValue<Vector2>().y;
     }
 }
