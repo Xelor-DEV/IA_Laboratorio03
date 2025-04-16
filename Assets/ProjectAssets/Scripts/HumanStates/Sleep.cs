@@ -1,4 +1,4 @@
-using Assets.ProjectAssets.Scripts;
+// Sleep.cs
 using UnityEngine;
 
 public class Sleep : Human
@@ -14,36 +14,28 @@ public class Sleep : Human
 
     public override void Enter()
     {
-        hasArrived = false;
-        agent.Target = destinationManager.bedroom;
-        agent.Type = TypeSteeringBehavior.Arrive;
+        base.Enter();
         agentData.isPaused = true;
-
         agentData.energy.increaseEnabled = false;
+        SetDestination(destinationManager.bedroom.position);
     }
 
     public override void Execute()
     {
-        if (!hasArrived)
+        if (HasReachedDestination())
         {
-            if (agent.TargetDistance < arrivalThreshold)
-            {
-                hasArrived = true;
-                agentData.isPaused = false;
-                agentData.energy.increaseEnabled = true;
-            }
-            return;
-        }
+            agentData.isPaused = false;
+            agentData.energy.increaseEnabled = true;
 
-        // Verificar ambas condiciones
-        if (agentData.energy.current >= energyFullThreshold)
-        {
-            stateMachine.ChangeState(TypeState.Play);
+            if (agentData.energy.current >= energyFullThreshold)
+                stateMachine.ChangeState(TypeState.Play);
         }
     }
 
     public override void Exit()
     {
+        base.Exit();
         agentData.energy.increaseEnabled = false;
+        StopMovement();
     }
 }

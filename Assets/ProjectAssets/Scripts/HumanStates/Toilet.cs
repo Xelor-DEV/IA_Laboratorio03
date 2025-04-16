@@ -1,4 +1,4 @@
-using Assets.ProjectAssets.Scripts;
+// Toilet.cs
 using UnityEngine;
 
 public class Toilet : Human
@@ -14,32 +14,28 @@ public class Toilet : Human
 
     public override void Enter()
     {
-        hasArrived = false;
-        agent.Target = destinationManager.bathroom;
-        agent.Type = TypeSteeringBehavior.Arrive;
+        base.Enter();
         agentData.isPaused = true;
         agentData.bladder.decreaseEnabled = false;
+        SetDestination(destinationManager.bathroom.position);
     }
 
     public override void Execute()
     {
-        if (!hasArrived)
+        if (HasReachedDestination())
         {
-            if (agent.TargetDistance < arrivalThreshold)
-            {
-                hasArrived = true;
-                agentData.isPaused = false;
-                agentData.bladder.decreaseEnabled = true;
-            }
-            return;
-        }
+            agentData.isPaused = false;
+            agentData.bladder.decreaseEnabled = true;
 
-        if (agentData.bladder.current <= bladderEmptyThreshold)
-            stateMachine.ChangeState(TypeState.Play);
+            if (agentData.bladder.current <= bladderEmptyThreshold)
+                stateMachine.ChangeState(TypeState.Play);
+        }
     }
 
     public override void Exit()
     {
+        base.Exit();
         agentData.bladder.decreaseEnabled = false;
+        StopMovement();
     }
 }

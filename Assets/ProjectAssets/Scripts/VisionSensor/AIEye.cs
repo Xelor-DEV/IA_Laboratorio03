@@ -212,9 +212,11 @@ public class AIEye : MonoBehaviour
     int index = 0;
     public float MinRate;
     public float MaxRate;
+    private StateMachine stateMachine;
     // Start is called before the first frame update
     void Start()
     {
+        stateMachine = GetComponent<StateMachine>();
         for (int i = 0; i < arrayRate.Length; i++)
         {
             arrayRate[i] = Random.Range(MinRate, MaxRate);
@@ -266,9 +268,14 @@ public class AIEye : MonoBehaviour
 
         }
 
-
-        if (ViewToy == null)
+        if (ViewToy != null)
+        {
+            stateMachine.ChangeState(TypeState.FollowTheToy);
+        }
+        else
+        {
             dataView.InSight = false;
+        }
     }
     private void OnValidate()
     {

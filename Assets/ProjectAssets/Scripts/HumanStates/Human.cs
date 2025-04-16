@@ -1,28 +1,43 @@
 using UnityEngine;
-using Assets.ProjectAssets.Scripts;
+using UnityEngine.AI;
 public enum TypeState
 {
     Play,
     Eat,
     Toilet,
-    Sleep
+    Sleep,
+    FollowTheToy
 }
 
 public class Human : State
 {
+    protected NavMeshAgent navAgent;
     protected AgentDataManager agentData;
-    protected Agent agent;
     protected DestinationManager destinationManager;
-    [SerializeField] protected bool hasArrived;
-
-    [Header("Settings")]
-    [SerializeField] protected float arrivalThreshold = 0.7f;
 
     public override void LoadComponents()
     {
         base.LoadComponents();
+        navAgent = GetComponent<NavMeshAgent>();
         agentData = GetComponent<AgentDataManager>();
-        agent = GetComponent<Agent>();
         destinationManager = GetComponent<DestinationManager>();
+    }
+
+    protected bool HasReachedDestination()
+    {
+        return !navAgent.pathPending &&
+               navAgent.remainingDistance <= navAgent.stoppingDistance &&
+               (!navAgent.hasPath || navAgent.velocity.sqrMagnitude == 0f);
+    }
+
+    protected void SetDestination(Vector3 target)
+    {
+        navAgent.SetDestination(target);
+        navAgent.isStopped = false;
+    }
+
+    protected void StopMovement()
+    {
+        navAgent.isStopped = true;
     }
 }

@@ -1,4 +1,4 @@
-using Assets.ProjectAssets.Scripts;
+// Eat.cs
 using UnityEngine;
 
 public class Eat : Human
@@ -14,32 +14,28 @@ public class Eat : Human
 
     public override void Enter()
     {
-        hasArrived = false;
-        agent.Target = destinationManager.diningRoom;
-        agent.Type = TypeSteeringBehavior.Arrive;
+        base.Enter();
         agentData.isPaused = true;
         agentData.hunger.decreaseEnabled = false;
+        SetDestination(destinationManager.diningRoom.position);
     }
 
     public override void Execute()
     {
-        if (!hasArrived)
+        if (HasReachedDestination())
         {
-            if (agent.TargetDistance < arrivalThreshold)
-            {
-                hasArrived = true;
-                agentData.isPaused = false;
-                agentData.hunger.decreaseEnabled = true;
-            }
-            return;
-        }
+            agentData.isPaused = false;
+            agentData.hunger.decreaseEnabled = true;
 
-        if (agentData.hunger.current <= hungerSatisfiedThreshold)
-            stateMachine.ChangeState(TypeState.Play);
+            if (agentData.hunger.current <= hungerSatisfiedThreshold)
+                stateMachine.ChangeState(TypeState.Play);
+        }
     }
 
     public override void Exit()
     {
+        base.Exit();
         agentData.hunger.decreaseEnabled = false;
+        StopMovement();
     }
 }

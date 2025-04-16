@@ -1,5 +1,5 @@
+// Play.cs
 using UnityEngine;
-using Assets.ProjectAssets.Scripts;
 
 public class Play : Human
 {
@@ -7,6 +7,8 @@ public class Play : Human
     [SerializeField] private float energyThreshold = 0.2f;
     [SerializeField] private float hungerThreshold = 0.8f;
     [SerializeField] private float bladderThreshold = 0.7f;
+
+    private bool firstPositionReached;
 
     private void Awake()
     {
@@ -16,31 +18,44 @@ public class Play : Human
 
     public override void Enter()
     {
-        hasArrived = false;
-        agent.Target = destinationManager.playArea;
-        agent.Type = TypeSteeringBehavior.Arrive;
+        base.Enter();
+        firstPositionReached = false;
         agentData.isPaused = true;
+        ToggleNeeds(false);
 
-        agentData.energy.decreaseEnabled = false;
-        agentData.hunger.increaseEnabled = false;
-        agentData.bladder.increaseEnabled = false;
+        SetDestination(destinationManager.randomPositionGenerator.GetNextPosition());
     }
 
     public override void Execute()
     {
-        if (!hasArrived)
+        if (!firstPositionReached)
         {
-            if (agent.TargetDistance < arrivalThreshold)
+            if (HasReachedDestination())
             {
-                hasArrived = true;
+                firstPositionReached = true;
                 agentData.isPaused = false;
-                agentData.energy.decreaseEnabled = true;
-                agentData.hunger.increaseEnabled = true;
-                agentData.bladder.increaseEnabled = true;
+                ToggleNeeds(true);
             }
             return;
         }
 
+        if (HasReachedDestination())
+        {
+            SetDestination(destinationManager.randomPositionGenerator.GetNextPosition());
+        }
+
+        CheckStateTransitions();
+    }
+
+    private void ToggleNeeds(bool state)
+    {
+        agentData.energy.decreaseEnabled = state;
+        agentData.hunger.increaseEnabled = state;
+        agentData.bladder.increaseEnabled = state;
+    }
+
+    private void CheckStateTransitions()
+    {
         if (agentData.energy.current <= energyThreshold)
             stateMachine.ChangeState(TypeState.Sleep);
         else if (agentData.hunger.current >= hungerThreshold)
@@ -51,8 +66,8 @@ public class Play : Human
 
     public override void Exit()
     {
-        agentData.energy.decreaseEnabled = false;
-        agentData.hunger.increaseEnabled = false;
-        agentData.bladder.increaseEnabled = false;
+        base.Exit();
+        ToggleNeeds(false);
+        StopMovement();
     }
 }
