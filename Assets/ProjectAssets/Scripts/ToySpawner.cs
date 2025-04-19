@@ -83,7 +83,7 @@ public class ToySpawner : MonoBehaviour
     }
 
     // Los métodos de visualización (OnDrawGizmos, DrawCube, DrawPlane) se mantienen igual
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         DrawCube();
         DrawPlane();

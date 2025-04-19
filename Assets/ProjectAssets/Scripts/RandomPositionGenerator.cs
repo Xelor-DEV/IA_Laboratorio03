@@ -48,7 +48,7 @@ public class RandomPositionGenerator : MonoBehaviour
         return lastGeneratedPosition;
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         DrawCube();
         DrawPlane();

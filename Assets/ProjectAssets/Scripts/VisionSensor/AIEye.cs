@@ -2,8 +2,6 @@ using UnityEngine;
 public class DataViewBase
 {
     #region RangeView
-
-
     [Header("----- RangeView -----")]
     [Range(0, 180)]
     public float angle = 30f;
@@ -16,7 +14,6 @@ public class DataViewBase
     [Header("----- Owner ----- ")]
     public Transform Owner;
 
-
     #endregion
     [Header("----- DrawGizmo ----- ")]
     public bool IsDrawGizmo = false;
@@ -24,7 +21,9 @@ public class DataViewBase
     [Header("----- LayerMask ----- ")]
     public LayerMask Scanlayers;
     public DataViewBase()
-    { }
+    {
+
+    }
     public virtual bool IsInSight(Transform enemy)
     {
         return false;
@@ -124,7 +123,6 @@ public class DataViewBase
 [System.Serializable]
 public class DataView : DataViewBase
 {
-
     public LayerMask occlusionlayers;
 
     [Header("InsideObject")]
@@ -134,7 +132,9 @@ public class DataView : DataViewBase
     public bool InSight = false;
     Transform enemy;
     public DataView()
-    { }
+    {
+
+    }
 
     public override bool IsInSight(Transform AimOffset)
     {
@@ -149,8 +149,6 @@ public class DataView : DataViewBase
         if (direcction.magnitude > distance + 2)
             return InSight;
 
-
-
         if (dest.y < -(this.height + this.Owner.position.y) || dest.y > (this.height + this.Owner.position.y))
         {
             return this.InSight;
@@ -164,14 +162,10 @@ public class DataView : DataViewBase
             return this.InSight;
         }
 
-        //if (this.IsDrawGizmo) 
-        //  Debug.DrawLine(origin, dest, Color.red, 2f);
-
         if (this.InsideObject && Physics.Linecast(origin, dest, this.occlusionlayers))
         {
             return this.InSight;
         }
-
 
         enemy = AimOffset;
 
@@ -195,10 +189,6 @@ public class DataView : DataViewBase
             Gizmos.DrawWireSphere(this.Owner.position + this.Owner.forward * this.distance, 1f);
 
         }
-        //if (enemy != null)
-        //{
-        //    Gizmos.DrawLine(this.Owner.position, enemy.position);
-        //}
     }
 }
 #endregion
@@ -206,14 +196,13 @@ public class DataView : DataViewBase
 public class AIEye : MonoBehaviour
 {
     public DataView dataView = new DataView();
-    public Health ViewToy = new Health();
+    public EntityIdentity ViewToy;
     float[] arrayRate = new float[100];
     float FrameRate = 0;
     int index = 0;
     public float MinRate;
     public float MaxRate;
     private StateMachine stateMachine;
-    // Start is called before the first frame update
     void Start()
     {
         stateMachine = GetComponent<StateMachine>();
@@ -223,7 +212,6 @@ public class AIEye : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (FrameRate > arrayRate[index])
@@ -236,9 +224,6 @@ public class AIEye : MonoBehaviour
         }
 
         FrameRate += Time.deltaTime;
-
-
-
     }
     void Scan()
     {
@@ -248,12 +233,9 @@ public class AIEye : MonoBehaviour
         float min_dist = float.MaxValue;
         for (int i = 0; (i < toys.Length); i++)
         {
-
             GameObject toy = toys[i].gameObject;
 
-            Debug.Log("name: " + toy.name);
-
-            Health health = toy.GetComponent<Health>();
+            EntityIdentity health = toy.GetComponent<EntityIdentity>();
             if (health != null && health.AimOffSet != null && dataView.IsInSight(health.AimOffSet))
             {
                 float dist = (transform.position - health.transform.position).magnitude;
@@ -265,7 +247,6 @@ public class AIEye : MonoBehaviour
 
                 }
             }
-
         }
 
         if (ViewToy != null)

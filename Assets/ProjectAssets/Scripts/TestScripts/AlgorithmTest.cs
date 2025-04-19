@@ -27,6 +27,19 @@ public class AlgorithmTest : MonoBehaviour
     [SerializeField] private Transform pathTargetTransform;
     [SerializeField] private Color pathColor = Color.magenta;
     private NavMeshPath calculatedPath;
+    [Header("Find Closest Edge Variables")]
+    [SerializeField] private Transform closestEdgeTargetTransform;
+    [SerializeField] private Color edgeColor = Color.cyan;
+    [SerializeField] private Vector3 lastClosestEdgePosition;
+    [Header("RayCast Variables")]
+    [SerializeField] private Transform rayStartTransform;
+    [SerializeField] private Transform rayEndTransform;
+    [SerializeField] private Color rayColor = Color.blue;
+    [SerializeField] private Color hitColor = Color.red;
+    [SerializeField] private float hitRadius = 0.3f;
+    [SerializeField] private bool moveToHitPosition = false;
+    [SerializeField] private bool hasRayHit;
+    private NavMeshHit rayHit;
 
     [Header("Debug Variables")]
     [SerializeField] private Algorithm lastExecutedAlgorithm = Algorithm.None;
@@ -84,6 +97,12 @@ public class AlgorithmTest : MonoBehaviour
             case Algorithm.CalculatePath:
                 ExecuteCalculatePath();
                 break;
+            case Algorithm.FindClosestEdge:
+                ExecuteFindClosestEdge();
+                break;
+            case Algorithm.RayCast:
+                ExecuteRayCast();
+                break;
         }
 
         lastExecutedAlgorithm = currentAlgorithm;
@@ -130,6 +149,38 @@ public class AlgorithmTest : MonoBehaviour
         }
 
         CalculatePath(pathTargetTransform.position);
+    }
+
+    private void ExecuteFindClosestEdge()
+    {
+        if (closestEdgeTargetTransform == null)
+        {
+            Debug.Log("No closest edge target assigned");
+            return;
+        }
+
+        Vector3 edgePosition;
+        if (FindClosestEdge(closestEdgeTargetTransform.position, out edgePosition))
+        {
+            lastClosestEdgePosition = edgePosition;
+            agent.SetDestination(edgePosition);
+        }
+    }
+
+    private void ExecuteRayCast()
+    {
+        if (rayStartTransform == null || rayEndTransform == null)
+        {
+            Debug.Log("Missing transforms for RayCast");
+            return;
+        }
+
+        hasRayHit = RayCast(rayStartTransform.position, rayEndTransform.position);
+
+        if(hasRayHit && moveToHitPosition)
+        {
+            agent.SetDestination(rayHit.position);
+        }
     }
 
     private bool SamplePosition(Vector3 positionCenter, float range, out Vector3 resultPosition)
@@ -189,6 +240,29 @@ public class AlgorithmTest : MonoBehaviour
         }
     }
 
+    private bool FindClosestEdge(Vector3 position, out Vector3 closestEdgePoint)
+    {
+        NavMeshHit hit;
+        if (NavMesh.FindClosestEdge(position, out hit, NavMesh.AllAreas))
+        {
+            closestEdgePoint = hit.position;
+            return true;
+        }
+
+        closestEdgePoint = Vector3.zero;
+        return false;
+    }
+
+    private bool RayCast(Vector3 startPosition, Vector3 endPosition)
+    {
+        if (NavMesh.Raycast(startPosition, endPosition, out rayHit, NavMesh.AllAreas))
+        {
+            Debug.Log("Collision detected in: " + rayHit.position);
+            return true;
+        }
+        return false;
+    }
+
     private void OnDrawGizmos()
     {
         if (lastExecutedAlgorithm == Algorithm.SamplePosition)
@@ -243,6 +317,52 @@ public class AlgorithmTest : MonoBehaviour
             {
                 Gizmos.color = Color.cyan;
                 Gizmos.DrawWireSphere(pathTargetTransform.position, 1f);
+            }
+        }
+        else if (lastExecutedAlgorithm == Algorithm.FindClosestEdge)
+        {
+            // Dibujar posición original
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(closestEdgeTargetTransform.position, 0.5f);
+
+            // Dibujar borde más cercano
+            Gizmos.color = edgeColor;
+            Gizmos.DrawSphere(lastClosestEdgePosition, 0.3f);
+
+            // Dibujar línea de conexión
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(closestEdgeTargetTransform.position, lastClosestEdgePosition);
+        }
+        else if (lastExecutedAlgorithm == Algorithm.RayCast)
+        {
+            if (rayStartTransform != null && rayEndTransform != null)
+            {
+                // Dibujar línea del rayo
+                Gizmos.color = hasRayHit ? hitColor : rayColor;
+                Gizmos.DrawLine(rayStartTransform.position, rayEndTransform.position);
+
+                // Dibujar punto de impacto
+                if (hasRayHit)
+                {
+                    Gizmos.color = hitColor;
+                    Gizmos.DrawSphere(rayHit.position, hitRadius);
+                }
+            }
+        }
+        else if (lastExecutedAlgorithm == Algorithm.RayCast)
+        {
+            if (rayStartTransform != null && rayEndTransform != null)
+            {
+                // Dibujar línea del rayo
+                Gizmos.color = hasRayHit ? hitColor : rayColor;
+                Gizmos.DrawLine(rayStartTransform.position, rayEndTransform.position);
+
+                // Dibujar punto de impacto
+                if (hasRayHit)
+                {
+                    Gizmos.color = hitColor;
+                    Gizmos.DrawSphere(rayHit.position, hitRadius);
+                }
             }
         }
     }

@@ -2,7 +2,7 @@
 
 public class FollowTheToy : Human
 {
-    private Health targetToy;
+    private EntityIdentity targetToy;
     private AIEye aiEye;
 
     private void Awake()
@@ -41,14 +41,7 @@ public class FollowTheToy : Human
             return;
         }
 
-        // Actualizar destino si el juguete se mueve
         SetDestination(targetToy.transform.position);
-        /*
-        if (HasReachedDestination())
-        {
-            CollectToy();
-        }
-        */
     }
 
     private void CollectToy()
@@ -56,16 +49,15 @@ public class FollowTheToy : Human
         Destroy(targetToy.gameObject);
         stateMachine.ChangeState(TypeState.Play);
     }
-
     private void OnTriggerEnter(Collider other)
     {
-        Health toy = other.GetComponent<Health>();
+        EntityIdentity toy = other.GetComponent<EntityIdentity>();
         if (toy != null && toy == targetToy && toy.Entity == Entity.Toy)
         {
             CollectToy();
         }
     }
-
+   
     public override void Exit()
     {
         base.Exit();

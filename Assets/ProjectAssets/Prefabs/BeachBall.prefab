@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5744967134614643531}
   - component: {fileID: 1027401188992154878}
   - component: {fileID: 134524432797381513}
+  - component: {fileID: 2145800158581664350}
   m_Layer: 7
   m_Name: BeachBall
   m_TagString: Untagged
@@ -93,11 +94,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 5115714598522700134}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58769487a2a8e81489991fe5b78ea191, type: 3}
+  m_Script: {fileID: 11500000, guid: d2d891ebd99ac584bbef929feefad8e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Entity: 1
   AimOffSet: {fileID: 6816073097098572075}
+--- !u!135 &2145800158581664350
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5115714598522700134}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.6
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6366974116843706816
 GameObject:
   m_ObjectHideFlags: 0
